@@ -22,15 +22,15 @@ public sealed class Redirect
 
     [Function("Redirect")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{route}")] HttpRequest httpRequest,
-        string route)
+        [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{**catchAll}")] HttpRequest httpRequest,
+        string catchAll)
     {
-        if (string.IsNullOrWhiteSpace(route))
+        if (string.IsNullOrWhiteSpace(catchAll))
         {
             return new BadRequestResult();
         }
 
-        var request = new RedirectionRequest(httpRequest.Host.Host, UrlEncoder.Default.Encode(route));
+        var request = new RedirectionRequest(httpRequest.Host.Host, UrlEncoder.Default.Encode(catchAll));
         _logger.LogInformation("Start processing Redirect request for {host}/{path}.", request.Host, request.Path);
 
         var result = await _mediator.Send(request);
