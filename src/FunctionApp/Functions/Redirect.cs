@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace FunctionApp.Functions;
@@ -24,7 +25,7 @@ public sealed class Redirect
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{route}")] HttpRequest httpRequest,
         string route)
     {
-        var request = new RedirectionRequest(httpRequest.Host.Host, route);
+        var request = new RedirectionRequest(httpRequest.Host.Host, UrlEncoder.Default.Encode(route));
         _logger.LogInformation("Start processing Redirect request for {host}/{path}.", request.Host, request.Path);
 
         if (string.IsNullOrWhiteSpace(route))
