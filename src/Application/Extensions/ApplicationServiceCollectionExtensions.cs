@@ -1,6 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentResults;
+using MediatR;
+using Microsoft.Extensions.DependencyInjection;
+using TheGnouCommunity.UrlManager.Application.Commands;
 
-namespace Application.Extensions;
+namespace TheGnouCommunity.UrlManager.Application.Extensions;
 
 public static class ApplicationServiceCollectionExtensions
 {
@@ -8,6 +11,7 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddMediatR(cfg => {
             cfg.RegisterServicesFromAssembly(typeof(ApplicationServiceCollectionExtensions).Assembly);
+            cfg.AddBehavior<IPipelineBehavior<RedirectionRequest, Result<string>>, RedirectionRequestHandlerResultBehavior>();
         });
 
         return services;

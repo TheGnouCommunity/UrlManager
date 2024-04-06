@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Infrastructure;
+namespace TheGnouCommunity.UrlManager.Infrastructure;
 
-public class TableStorageOptions
+public class StorageOptions
 {
-    public const string ConfigurationSectionName = nameof(TableStorageOptions);
+    public const string ConfigurationSectionName = nameof(StorageOptions);
 
-    [NotNull]
-    [Required]
-    public string StorageUri { get; set; } = default!;
     [NotNull]
     [Required]
     public string AccountName { get; set; } = default!;

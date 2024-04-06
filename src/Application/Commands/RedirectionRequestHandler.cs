@@ -1,26 +1,44 @@
-﻿using Domain;
-using FluentResults;
+﻿using FluentResults;
 using MediatR;
+using TheGnouCommunity.UrlManager.Domain.Messaging;
+using TheGnouCommunity.UrlManager.Services;
 
-namespace Application.Commands;
+namespace TheGnouCommunity.UrlManager.Application.Commands;
 
-internal sealed class RedirectionRequestHandler : IRequestHandler<RedirectionRequest, Result<string>>
+internal sealed class RedirectionRequestHandlerResultBehavior : IPipelineBehavior<RedirectionRequest, Result<string>>
 {
-    private readonly IPathRedirectionRepository _pathRedirectionRepository;
+    private readonly IServiceBus _serviceBus;
 
-    public RedirectionRequestHandler(IPathRedirectionRepository pathRedirectionRepository)
+    public RedirectionRequestHandlerResultBehavior(IServiceBus serviceBus)
     {
-        _pathRedirectionRepository = pathRedirectionRepository;
+        ArgumentNullException.ThrowIfNull(serviceBus);
+
+        _serviceBus = serviceBus;
     }
 
-    public async Task<Result<string>> Handle(RedirectionRequest request, CancellationToken cancellationToken)
+    public async Task<Result<string>> Handle(RedirectionRequest request, RequestHandlerDelegate<Result<string>> next, CancellationToken cancellationToken)
     {
-        var pathRedirection = await _pathRedirectionRepository.TryFindPathRedirectionByPath(request.Host, request.Path);
-        if (pathRedirection is null)
+        var result = await next.Invoke();
+        if (result.IsFailed)
         {
-            return Result.Fail("No path redirection found.");
+            await _serviceBus.Publish(new RedirectionRequestFailed
+            {
+                Host = request.Host,
+                Path = request.Path,
+                IPAddress = request.IPAddress?.ToString(),
+                Errors = result.Errors.Select(_ => _.Message).ToList(),
+            });
+
+            return result;
         }
 
-        return pathRedirection.TargetUrl;
+        await _serviceBus.Publish(new RedirectionRequestSucceeded
+        {
+            Host = request.Host,
+            Path = request.Path,
+            IPAddress = request.IPAddress?.ToString(),
+        });
+
+        return result;
     }
 }

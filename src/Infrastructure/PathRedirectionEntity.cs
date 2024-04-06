@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace Infrastructure;
+namespace TheGnouCommunity.UrlManager.Infrastructure;
 
 internal record PathRedirectionEntity : ITableEntity
 {

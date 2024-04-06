@@ -1,14 +1,14 @@
 ﻿using Azure.Data.Tables;
-using Domain;
 using Microsoft.Extensions.Options;
+using TheGnouCommunity.UrlManager.Domain.AggregateModels.PathRedirectionAgregate;
 
-namespace Infrastructure;
+namespace TheGnouCommunity.UrlManager.Infrastructure;
 
 internal sealed class PathRedirectionRepository : IPathRedirectionRepository
 {
     private readonly TableStorageHelper _tableStorageHelper;
 
-    public PathRedirectionRepository(IOptions<TableStorageOptions> options)
+    public PathRedirectionRepository(IOptions<StorageOptions> options)
     {
         ArgumentNullException.ThrowIfNull(options);
 
@@ -17,8 +17,7 @@ internal sealed class PathRedirectionRepository : IPathRedirectionRepository
 
     public async Task<PathRedirection?> TryFindPathRedirectionByPath(string hostName, string path)
     {
-        var tableClient = GetPathRedirectionTableClient();
-        await tableClient.CreateIfNotExistsAsync();
+        var tableClient = await GetPathRedirectionTableClient();
         var pathRedirectionEntityResponse = await tableClient.GetEntityIfExistsAsync<PathRedirectionEntity>(hostName, path);
         if (!pathRedirectionEntityResponse.HasValue ||
             pathRedirectionEntityResponse.Value is null)
@@ -34,5 +33,5 @@ internal sealed class PathRedirectionRepository : IPathRedirectionRepository
             pathRedirectionEntity.TargetUrl);
     }
 
-    private TableClient GetPathRedirectionTableClient() => _tableStorageHelper.GetTableClient("PathRedirection");
+    private Task<TableClient> GetPathRedirectionTableClient() => _tableStorageHelper.GetTableClient("PathRedirection");
 }

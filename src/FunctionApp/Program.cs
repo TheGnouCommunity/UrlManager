@@ -1,6 +1,6 @@
-﻿using Application.Extensions;
-using Infrastructure;
-using Infrastructure.Extensions;
+﻿using TheGnouCommunity.UrlManager.Application.Extensions;
+using TheGnouCommunity.UrlManager.Infrastructure;
+using TheGnouCommunity.UrlManager.Infrastructure.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -20,7 +20,7 @@ hostBuilder.ConfigureAppConfiguration((context, builder) =>
 hostBuilder.ConfigureServices((context, services) =>
 {
     services.AddApplication();
-    services.AddInfrastructure(_ => _.Bind(context.Configuration.GetSection(TableStorageOptions.ConfigurationSectionName))
+    services.AddInfrastructure(_ => _.Bind(context.Configuration.GetSection(StorageOptions.ConfigurationSectionName))
                                      .ValidateDataAnnotations());
 });
 

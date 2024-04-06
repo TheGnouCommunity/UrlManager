@@ -1,4 +1,4 @@
-﻿namespace Domain;
+﻿namespace TheGnouCommunity.UrlManager.Domain.AggregateModels.PathRedirectionAgregate;
 
 public interface IPathRedirectionRepository
 {

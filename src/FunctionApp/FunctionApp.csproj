@@ -3,6 +3,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <OutputType>Exe</OutputType>
+    <RootNamespace>TheGnouCommunity.UrlManager.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <AssemblyName>TheGnouCommunity.UrlManager.$(MSBuildProjectName)</AssemblyName>
     <UserSecretsId>629189b0-c52b-4970-95fe-805c19545552</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
