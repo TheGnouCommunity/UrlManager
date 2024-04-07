@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using MediatR;
+using TheGnouCommunity.UrlManager.Application.Errors;
 using TheGnouCommunity.UrlManager.Domain.AggregateModels.PathRedirectionAgregate;
 
 namespace TheGnouCommunity.UrlManager.Application.Commands;
@@ -20,7 +21,7 @@ internal sealed class RedirectionRequestHandler : IRequestHandler<RedirectionReq
         var pathRedirection = await _pathRedirectionRepository.TryFindPathRedirectionByPath(request.Host, request.Path);
         if (pathRedirection is null)
         {
-            return Result.Fail("No path redirection found.");
+            return Result.Fail(new PathRedirectionNotFoundError(request.Host, request.Path));
         }
 
         return pathRedirection.TargetUrl;

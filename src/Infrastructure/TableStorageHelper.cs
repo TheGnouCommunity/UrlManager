@@ -1,30 +1,26 @@
-﻿using Azure.Storage;
-using Azure.Storage.Queues;
+﻿using Azure.Data.Tables;
 
 namespace TheGnouCommunity.UrlManager.Infrastructure;
 
-internal sealed class QueueStorageHelper
+internal sealed class TableStorageHelper
 {
-    private readonly StorageOptions _options;
+    private readonly string _connectionString;
 
-    public QueueStorageHelper(StorageOptions options)
+    public TableStorageHelper(string connectionString)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(connectionString);
 
-        _options = options;
+        _connectionString = connectionString;
     }
 
-    public async Task<QueueClient> GetQueueClient(string queueName)
+    public async Task<TableClient> GetTableClient(string tableName)
     {
-        var queueServiceClient = CreateQueueServiceClient();
-        var queueClient = queueServiceClient.GetQueueClient(queueName);
-        await queueClient.CreateIfNotExistsAsync();
-        return queueClient; ;
+        var tableServiceClient = CreateTableServiceClient();
+        var tableClient = tableServiceClient.GetTableClient(tableName);
+        await tableClient.CreateIfNotExistsAsync();
+        return tableClient;
     }
 
-    private QueueServiceClient CreateQueueServiceClient()
-        => new QueueServiceClient(
-            new Uri($"https://{_options.AccountName}.queue.core.windows.net"),
-            new StorageSharedKeyCredential(_options.AccountName, _options.StorageAccountKey));
-
+    private TableServiceClient CreateTableServiceClient()
+        => new TableServiceClient(_connectionString);
 }

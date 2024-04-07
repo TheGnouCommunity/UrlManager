@@ -1,28 +1,30 @@
-﻿using Azure.Data.Tables;
+﻿using Azure.Storage.Queues;
 
 namespace TheGnouCommunity.UrlManager.Infrastructure;
 
-internal sealed class TableStorageHelper
+internal sealed class QueueStorageHelper
 {
-    private readonly StorageOptions _options;
+    private readonly string _connectionString;
 
-    public TableStorageHelper(StorageOptions options)
+    public QueueStorageHelper(string connectionString)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(connectionString);
 
-        _options = options;
+        _connectionString = connectionString;
     }
 
-    public async Task<TableClient> GetTableClient(string tableName)
+    public async Task<QueueClient> GetQueueClient(string queueName)
     {
-        var tableServiceClient = CreateTableServiceClient();
-        var tableClient = tableServiceClient.GetTableClient(tableName);
-        await tableClient.CreateIfNotExistsAsync();
-        return tableClient;
+        var queueServiceClient = CreateQueueServiceClient();
+        var queueClient = queueServiceClient.GetQueueClient(queueName);
+        await queueClient.CreateIfNotExistsAsync();
+        return queueClient;
     }
 
-    private TableServiceClient CreateTableServiceClient()
-        => new TableServiceClient(
-            new Uri($"https://{_options.AccountName}.table.core.windows.net"),
-            new TableSharedKeyCredential(_options.AccountName, _options.StorageAccountKey));
+    private QueueServiceClient CreateQueueServiceClient()
+        => new QueueServiceClient(_connectionString, new QueueClientOptions
+        {
+            MessageEncoding = QueueMessageEncoding.Base64
+        });
+
 }

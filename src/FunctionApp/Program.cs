@@ -1,9 +1,9 @@
-﻿using TheGnouCommunity.UrlManager.Application.Extensions;
-using TheGnouCommunity.UrlManager.Infrastructure;
-using TheGnouCommunity.UrlManager.Infrastructure.Extensions;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TheGnouCommunity.UrlManager.Application.Commands;
+using TheGnouCommunity.UrlManager.Application.Extensions;
+using TheGnouCommunity.UrlManager.Infrastructure.Extensions;
 
 var hostBuilder = new HostBuilder();
 
@@ -19,9 +19,9 @@ hostBuilder.ConfigureAppConfiguration((context, builder) =>
 
 hostBuilder.ConfigureServices((context, services) =>
 {
-    services.AddApplication();
-    services.AddInfrastructure(_ => _.Bind(context.Configuration.GetSection(StorageOptions.ConfigurationSectionName))
-                                     .ValidateDataAnnotations());
+    services.AddApplication(_ => _.Bind(context.Configuration.GetSection(GeoIP2Options.ConfigurationSectionName))
+                                  .ValidateDataAnnotations());
+    services.AddInfrastructure(context.Configuration["AzureWebJobsStorage"]);
 });
 
 var host = hostBuilder.Build();

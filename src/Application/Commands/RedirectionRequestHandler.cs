@@ -26,7 +26,8 @@ internal sealed class RedirectionRequestHandlerResultBehavior : IPipelineBehavio
                 Host = request.Host,
                 Path = request.Path,
                 IPAddress = request.IPAddress?.ToString(),
-                Errors = result.Errors.Select(_ => _.Message).ToList(),
+                RequestTime = DateTime.UtcNow,
+                Errors = result.Errors.Select(_ => _.GetType().Name).ToArray(),
             });
 
             return result;
@@ -37,6 +38,7 @@ internal sealed class RedirectionRequestHandlerResultBehavior : IPipelineBehavio
             Host = request.Host,
             Path = request.Path,
             IPAddress = request.IPAddress?.ToString(),
+            RequestTime = DateTime.UtcNow,
         });
 
         return result;

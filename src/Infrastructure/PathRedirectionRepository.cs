@@ -8,11 +8,11 @@ internal sealed class PathRedirectionRepository : IPathRedirectionRepository
 {
     private readonly TableStorageHelper _tableStorageHelper;
 
-    public PathRedirectionRepository(IOptions<StorageOptions> options)
+    public PathRedirectionRepository(string connectionString)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(connectionString);
 
-        _tableStorageHelper = new TableStorageHelper(options.Value);
+        _tableStorageHelper = new TableStorageHelper(connectionString);
     }
 
     public async Task<PathRedirection?> TryFindPathRedirectionByPath(string hostName, string path)

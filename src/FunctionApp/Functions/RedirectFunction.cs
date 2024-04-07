@@ -9,18 +9,18 @@ using TheGnouCommunity.UrlManager.Application.Commands;
 
 namespace FunctionApp.Functions;
 
-public sealed class Redirect
+public sealed class RedirectFunction
 {
     private readonly ILogger _logger;
     private readonly IMediator _mediator;
 
-    public Redirect(ILoggerFactory loggerFactory, IMediator mediator)
+    public RedirectFunction(ILoggerFactory loggerFactory, IMediator mediator)
     {
-        _logger = loggerFactory.CreateLogger<Redirect>();
+        _logger = loggerFactory.CreateLogger<RedirectFunction>();
         _mediator = mediator;
     }
 
-    [Function("Redirect")]
+    [Function(nameof(RedirectFunction))]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "{**catchAll}")] HttpRequest httpRequest,
         string catchAll)
