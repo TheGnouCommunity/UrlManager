@@ -46,17 +46,17 @@ internal sealed class CollectAnalyticsRequestHandler : IRequestHandler<CollectAn
         int month = request.RequestTime.Month;
         int day = request.RequestTime.Day;
 
-        if (request.Errors != null)
-        {
-            await _redirectionRequestAnalyticsRepository.AddDaily(year, month, day, request.Host, request.Path, cityId);
-            await _redirectionRequestAnalyticsRepository.AddMonthly(year, month, request.Host, request.Path, cityId);
-            await _redirectionRequestAnalyticsRepository.AddYearly(year, request.Host, request.Path, cityId);
-        }
-        else
+        if (request.Errors is not null)
         {
             await _redirectionRequestAnalyticsRepository.AddDailyError(year, month, day, request.Host, request.Path, cityId);
             await _redirectionRequestAnalyticsRepository.AddMonthlyError(year, month, request.Host, request.Path, cityId);
             await _redirectionRequestAnalyticsRepository.AddYearlyError(year, request.Host, request.Path, cityId);
+        }
+        else
+        {
+            await _redirectionRequestAnalyticsRepository.AddDaily(year, month, day, request.Host, request.Path, cityId);
+            await _redirectionRequestAnalyticsRepository.AddMonthly(year, month, request.Host, request.Path, cityId);
+            await _redirectionRequestAnalyticsRepository.AddYearly(year, request.Host, request.Path, cityId);
         }
     }
 }
