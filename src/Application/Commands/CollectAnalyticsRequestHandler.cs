@@ -34,11 +34,10 @@ internal sealed class CollectAnalyticsRequestHandler : IRequestHandler<CollectAn
             {
                 var cityResponse = await client.CityAsync(request.IPAddress);
                 cityId = cityResponse.City.GeoNameId;
-
             }
             catch (AddressNotFoundException ex)
             {
-                _logger.LogWarning(ex, "Unable to collect city analytics");
+                _logger.LogWarning(ex, "Unable to collect city analytics of {ipAddress}", request.IPAddress);
             }
         }
 
