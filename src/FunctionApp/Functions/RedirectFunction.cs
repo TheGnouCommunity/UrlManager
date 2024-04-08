@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using TheGnouCommunity.UrlManager.Application.Commands;
@@ -30,7 +31,13 @@ public sealed class RedirectFunction
             return new BadRequestResult();
         }
 
-        var request = new RedirectionRequest(httpRequest.Host.Host, UrlEncoder.Default.Encode(catchAll), httpRequest.HttpContext.Connection.RemoteIpAddress);
+        string? ipAddress = httpRequest.HttpContext.Connection.RemoteIpAddress?.ToString();
+        if (httpRequest.Headers.TryGetValue("X-Forwarded-For", out var headerValue))
+        {
+            ipAddress = headerValue.FirstOrDefault();
+        }
+
+        var request = new RedirectionRequest(httpRequest.Host.Host, UrlEncoder.Default.Encode(catchAll), ipAddress);
         _logger.LogInformation("Start processing Redirect request for {host}/{path}.", request.Host, request.Path);
 
         var result = await _mediator.Send(request);
