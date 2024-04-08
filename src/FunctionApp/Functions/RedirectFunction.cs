@@ -31,6 +31,8 @@ public sealed class RedirectFunction
             return new BadRequestResult();
         }
 
+        _logger.LogInformation("HTTP headers : {headers}", string.Join(";", httpRequest.Headers.Select(_ => $"{_.Key}={_.Value}")));
+
         string? ipAddress = httpRequest.HttpContext.Connection.RemoteIpAddress?.ToString();
         if (httpRequest.Headers.TryGetValue("X-Forwarded-For", out var headerValue))
         {
