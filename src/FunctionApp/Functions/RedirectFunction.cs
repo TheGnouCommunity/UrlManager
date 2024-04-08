@@ -31,12 +31,14 @@ public sealed class RedirectFunction
             return new BadRequestResult();
         }
 
-        _logger.LogInformation("HTTP headers : {headers}", string.Join(";", httpRequest.Headers.Select(_ => $"{_.Key}={_.Value}")));
-
         string? ipAddress = httpRequest.HttpContext.Connection.RemoteIpAddress?.ToString();
-        if (httpRequest.Headers.TryGetValue("X-Forwarded-For", out var headerValue))
+        if (httpRequest.Headers.TryGetValue("CLIENT-IP", out var headerValue))
         {
             ipAddress = headerValue.FirstOrDefault();
+            if (ipAddress is not null)
+            {
+                ipAddress = ipAddress.Split(":")[0];
+            }
         }
 
         var request = new RedirectionRequest(httpRequest.Host.Host, UrlEncoder.Default.Encode(catchAll), ipAddress);
